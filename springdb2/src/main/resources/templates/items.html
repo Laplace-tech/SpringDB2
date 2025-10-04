@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 목록</title>
+    <link th:href="@{/css/bootstrap.min.css}" href="css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container" style="max-width: 800px">
+    <div class="py-5 text-center">
+        <h2>상품 목록</h2>
+    </div>
+
+    <!-- 검색 폼 -->
+    <form th:object="${itemSearchCond}" method="get" class="form-inline mb-4">
+        <div class="row">
+            <div class="col">
+                <input type="text" th:field="*{itemName}" class="form-control" placeholder="상품명"/>
+            </div>
+            <div class="col">
+                <input type="number" th:field="*{maxPrice}" class="form-control" placeholder="최대 가격"/>
+            </div>
+            <div class="col">
+                <button type="submit" class="btn btn-secondary">검색</button>
+            </div>
+            <div class="col text-end">
+                <button type="button" class="btn btn-primary"
+                        th:onclick="|location.href='@{/items/add}'|">상품 등록</button>
+            </div>
+        </div>
+    </form>
+
+    <hr class="my-4">
+
+    <!-- 상품 목록 테이블 -->
+    <div>
+        <table class="table table-bordered">
+            <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>상품명</th>
+                <th>가격</th>
+                <th>수량</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${items}">
+                <td>
+                    <a th:href="@{/items/{itemId}(itemId=${item.id})}" th:text="${item.id}"></a>
+                </td>
+                <td>
+                    <a th:href="@{/items/{itemId}(itemId=${item.id})}" th:text="${item.itemName}"></a>
+                </td>
+                <td th:text="${item.price}"></td>
+                <td th:text="${item.quantity}"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(items)}">
+                <td colspan="4" class="text-center">조회된 상품이 없습니다.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div> <!-- /container -->
+
+</body>
+</html>
