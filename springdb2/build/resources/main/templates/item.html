@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 상세</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="py-5 text-center">
+        <h2>상품 상세</h2>
+    </div>
+
+    <!-- 저장 완료 메시지 -->
+    <div th:if="${param.status}" class="alert alert-success" role="alert">
+        저장 완료
+    </div>
+
+    <!-- 상품 정보 -->
+    <div class="mb-3">
+        <label for="itemId" class="form-label">상품 ID</label>
+        <input type="text" id="itemId" class="form-control" th:value="${item.id}" readonly>
+    </div>
+
+    <div class="mb-3">
+        <label for="itemName" class="form-label">상품명</label>
+        <input type="text" id="itemName" class="form-control" th:value="${item.itemName}" readonly>
+    </div>
+
+    <div class="mb-3">
+        <label for="price" class="form-label">가격</label>
+        <input type="text" id="price" class="form-control" th:value="${item.price}" readonly>
+    </div>
+
+    <div class="mb-3">
+        <label for="quantity" class="form-label">수량</label>
+        <input type="text" id="quantity" class="form-control" th:value="${item.quantity}" readonly>
+    </div>
+
+    <hr class="my-4">
+
+    <!-- 버튼 -->
+    <div class="row">
+        <div class="col">
+            <button class="w-100 btn btn-primary btn-lg"
+                    th:onclick="|location.href='@{/items/{itemId}/edit(itemId=${item.id})}'|"
+                    type="button">상품 수정
+            </button>
+        </div>
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg"
+                    th:onclick="|location.href='@{/items}'|"
+                    type="button">목록으로
+            </button>
+        </div>
+    </div>
+
+</div> <!-- /container -->
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="hello.springdb2.repository.mybatis.ItemMapper">
+
+	<!-- insert -->
+	<insert id="save" parameterType="Item" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO item (item_name, price, quantity)
+		VALUES (#{itemName}, #{price}, #{quantity})
+	</insert>
+	
+	<!--update-->
+	<update id="update" parameterType="map">
+		UPDATE item
+		<set>
+			<if test="updateParam.itemName != null">item_name = #{updateParam.itemName},</if>
+			<if test="updateParam.price != null">price = #{updateParam.price},</if>
+			<if test="updateParam.quantity != null">quantity = #{updateParam.quantity}</if>
+		</set>
+		WHERE id = #{id}		
+	</update>
+
+	<!--select-->
+	<select id="findById" resultType="Item">
+		SELECT id, item_name, price, quantity
+		FROM item
+		WHERE id = #{id}
+	</select>
+	
+	<!--select-->
+	<select id="findAll" resultType="Item">
+		SELECT id, item_name, price, quantity
+		FROM item
+		<where>
+			<if test="itemName != null and itemName != ''">
+				item_name like concat('%', #{itemName}, '%')
+			</if>
+			<if test="maxPrice != null">
+				AND price &lt;= #{maxPrice}
+			</if>
+		</where>
+	</select>
+
+</mapper>
