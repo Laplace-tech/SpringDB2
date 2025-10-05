@@ -3,6 +3,7 @@ package hello.springtransaction.propagation;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityManager;
@@ -16,7 +17,7 @@ public class LogRepository {
 
 	private final EntityManager em;
 
-//	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void save(Log logMessage) {
 		log.info("log 저장");
 		em.persist(logMessage);
