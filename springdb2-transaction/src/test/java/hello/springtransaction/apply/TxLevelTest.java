@@ -30,12 +30,8 @@ public class TxLevelTest {
             return new LevelService();
         }
     }
-	
-	/**
-	 * 이게 뭐하는 짓임? 
-	 *  ㄴ> 졸라 쓸데없네 ㅋㅋ
-	 */
-	@Slf4j
+
+    @Slf4j
 	@Transactional(readOnly = true)
 	static class LevelService {
 		
