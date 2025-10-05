@@ -41,15 +41,49 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * - 스프링은 내부적으로 트랜잭션 동기화 매니저를 이용하여 커넥션 등 리소스를 ThreadLocal 기반으로 공유/관리
  * 
  * 5. @Transactional (org.springframework.transaction.annotation.Transactional)
- *  - 선언만으로 트랜잭션 경계를 지정.
- *  - 메서드/클래스 단위로 선언 가능 (메서드 우선순위 > 클래스)
- *  - 주요 속성:
+ * - 선언만으로 트랜잭션 경계를 지정.
+ * - 메서드/클래스 단위로 선언 가능 (메서드 우선순위 > 클래스)
+ * - 주요 속성:
  *      - propagation: 트랜잭션 전파 방식 (기본값 = REQUIRED)
  *      - isolation: 트랜잭션 격리 수준
  *      - timeout: 제한 시간
  *      - readOnly: 읽기 전용 트랜잭션 여부 (성능 최적화)
  *      - rollbackFor / noRollbackFor: 롤백 대상 예외 지정
  * 
+ * 6. 트랜잭션 AOP (프록시 내부 호출)
+ * - 프록시룰 거치지 않고 대상 객체를 직접 호출하게 되면 프록시에서 수행되는 AOP, 트랜잭션이 적용되지 않는다
+ * - 프록시 객체가 주입되기 때문에 대상 객체를 직접 참조하는 일은 
+ *   일반적으로 발생하지 않는다. (프록시를 @Bean으로 지정하고 DI 시킨다)
+ * - 그러나, "대상 객체의 내부에서 트랜잭션이 적용되야 할 메서드가 호출되면 프록시를 거치지 않는 문제가 발생한다."
+ * 
+ * 7. 스프링 트랜잭션 전파 
+ * - 트랜잭션이 이미 진행 중인 상황에서 새로운 @Transactional 메서드가 호출될 때
+ *   "기존 트랜잭션에 참여할 지" OR "새로운 트랜잭션을 새로 시작할지"를 결정하는 정책
+ *   
+ *   스프링은 기본적으로 Propagation.REQUIRED 사용 
+ *   -> 이미 트랜잭션이 있으면 그 안에 참여하고, 없으면 새 트랜잭션을 시작
+ *   
+ * 8. 논리 트랜잭션 VS 물리 트랜잭션
+ *
+ * 논리 트랜잭션(Logical Transaction)
+ * - @Transactional 메서드 단위로 만들어지는 스프링의 트랜잭션 "논리 단위".
+ * - 트랜잭션 매니저가 관리하며, AOP 프록시를 통해 제어됨.
+ * - 트랜잭션이 겹쳐도 각각의 @Transactional 호출마다
+ *   논리 트랜잭션이 생긴다고 생각하면 됨.
+ *
+ * ex)
+ *   outerTx() → innerTx()
+ *   둘 다 @Transactional(REQUIRED)
+ *   => 논리 트랜잭션은 2개, 물리 트랜잭션은 1개
+ *
+ * 물리 트랜잭션(Physical Transaction)
+ * - 실제 DB 커넥션 단위 트랜잭션.
+ * - setAutoCommit(false) → commit(), rollback() 으로 제어되는 진짜 트랜잭션.
+ * - 스프링이 관리하는 모든 논리 트랜잭션이 공유함.
+ * - JDBC Connection, JPA EntityManager 단에서 트랜잭션이 시작됨.
+ *
+ * 9. 
+ *
  */
 
 @SpringBootApplication

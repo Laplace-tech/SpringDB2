@@ -48,6 +48,14 @@ public class InitTxTest {
 	@Slf4j
 	static class Hello {
 		
+		/**
+		 * 1. 스프링은 @Bean을 생성할 때 원본 객체를 만든 뒤 @Transactional이 붙어 있으면 
+		 *   프록시 객체로 감싸서 트랜잭션 기능을 추가한다.
+		 * 2. 그런데 @PostConstruct는 @Bean 초기화 직후 (프록시 적용 전) 호출된다.
+		 * 
+		 * 즉, @PostConstruct 실행 시점은 "프록시 AOP가 아직 적용되지 않은 상태"
+		 * 그래서, @Transactional은 완전히 무시된다. (근데 어떤 빡통이 이 두 애너테이션을 같이 쓰려할까?)
+		 */
 		@PostConstruct
 		@Transactional
 		public void initV1() {
@@ -55,6 +63,15 @@ public class InitTxTest {
             log.info("Hello init @PostConstruct tx active={}", isActive);
 		}
 		
+		/**
+		 * 스프링 컨테이너가 모든 빈 생성과 프록시 적용까지 완료된 후 실행되도록 하려면
+		 * 아래처럼 @EventListner(ApplicationReadyEvent.class)를 사용한다.
+		 * 
+		 * 이 시점에서는..
+		 * - 스프링 AOP 프록시가 완전히 적용된 이후
+		 * - 트랜잭션 프록시를 통해 호출됨
+		 * - 따라서 transaction active = true;
+		 */
 		@Transactional
 		@EventListener(value = ApplicationReadyEvent.class)
 		public void initV2() {

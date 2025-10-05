@@ -33,6 +33,17 @@ public class TxBasicTest {
     	assertThat(AopUtils.isAopProxy(basicService)).isTrue();
     }
     
+    /**
+     * @Transactional이 붙은 BasicService.tx() 메서드가 호출됨
+     * - 스프링 AOP가 이 메서드를 감싸서 트랜잭션을 시작
+     * - 기본 전파 옵션: PROPAGATION_REQUIRED -> 기존 트랜잭션이 없으면 새로 생성
+     * - 새로운 물리 트랜잭션 시작
+     * - 하이버네이트의 EntityManager가 생성되어 내부적으로 DB 커넥션을 가져옴 
+     * - BasicService.tx() 메서드가 정상 종료 -> 예외 없음 -> 커밋 진행
+     * - 스프링이 JpaTransactionManager를 통해 실제 DB 커밋 수행
+     * - 하이버네이트 -> JDBC -> DB 커밋 호출
+     * - 이후 EntityManager 닫음(close())
+     */
     @Test
     void txTest() {
     	basicService.tx();

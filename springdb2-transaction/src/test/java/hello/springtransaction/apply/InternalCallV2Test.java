@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
  * 스프링 AOP 기반 @Transactional의 자기 호출(Self-Invocation) 문제
  * 
  * 스프링의 @Transactional은 "프록시 객체"를 통해 트랜잭션을 시작하거나 커밋한다.
- * 따라서 프록시를 거치지 않는 내부 메서드 호출에서는 트랜잭션이 적용되지 않는다.
+ * 따라서 프록시를 거치지 않는 직접적인 내부 메서드 호출에서는 트랜잭션이 적용되지 않는다.
  *
  * [1] InternalCallV1Test
  *     - 한 클래스 내부에서 `external()`이 같은 클래스의 `internal()`을 직접 호출.
@@ -48,12 +48,12 @@ public class InternalCallV2Test {
 	@TestConfiguration
 	static class InternalCallV2Config {
 		@Bean
-		CallService helloService() {
-			return new CallService(innerService());
+		CallService CallService() {
+			return new CallService(internalService());
 		}
 		
 		@Bean
-		InternalService innerService() {
+		InternalService internalService() {
 			return new InternalService();
 		}
 		
